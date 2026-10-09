@@ -1,0 +1,298 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 730" width="1000" height="730" role="img" aria-labelledby="t d">
+<title id="t">Visual abstract: how loss of MYORG reshapes the astrocyte transcriptome</title>
+<desc id="d">Primary cortical and cerebellar astrocytes from wild-type and Myorg knockout mice were grown with or without serum (27 RNA-seq libraries, 8 groups, 12 contrasts) and analysed with STAR, edgeR, limma-voom, fgsea and clusterProfiler. Without serum, Myorg knockout astrocytes show lower apoptosis and oxidative phosphorylation signatures in cortex but higher ones in cerebellum, and NF-kB inflammatory signaling is raised in serum-free conditions.</desc>
+<style>
+  text { font-family: 'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif; fill: #e6edf3; }
+  .bgcard { fill: #151b23; stroke: #2d3640; }
+  .panel { fill: #0d1117; stroke: #2d3640; stroke-width: 1; }
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #9aa7b4; }
+  .title { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+  .sub { font-size: 14px; fill: #9aa7b4; }
+  .h2 { font-size: 16px; font-weight: 700; }
+  .body { font-size: 12.5px; }
+  .small { font-size: 11px; fill: #9aa7b4; }
+  .lab { font-size: 12px; font-weight: 700; }
+  .num { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .q { font-size: 12.5px; font-weight: 700; }
+  .take { font-size: 15px; }
+  .take b, .em { font-weight: 700; }
+  .step-role { font-size: 13px; font-weight: 700; }
+  .step-tool { font-size: 11px; }
+  .step-n { font-size: 10px; font-weight: 700; fill: #9aa7b4; }
+  .sulcus { fill: none; stroke: #2d3640; stroke-width: 1.4; stroke-linecap: round; }
+  .brain { fill: #1f2731; stroke: #9aa7b4; stroke-width: 1.4; }
+  .calc { fill: #d55181; transform-box: fill-box; transform-origin: center;
+           animation: pulse 3.2s ease-in-out infinite; }
+  .astro .proc { fill: none; stroke: #34b98b; stroke-linecap: round; }
+  .astro .soma { fill: #34b98b; }
+  .astro .foot { fill: #34b98b; }
+  .vessel { fill: #3a2129; stroke: #d55181; stroke-width: 1.2; stroke-opacity: .55; }
+  .er { fill: none; stroke: #0d1117; stroke-width: 1.6; stroke-linecap: round; }
+  .koX { stroke: #d55181; stroke-width: 3; stroke-linecap: round; }
+  .koRing { fill: #0d1117; stroke: #d55181; stroke-width: 2; }
+  .leader { stroke: #9aa7b4; stroke-width: 1; fill: none; }
+  .well { stroke-width: 2.2; }
+  .well.scm { fill: #3b3220; }
+  .well.sfm { fill: #0d1117; stroke-dasharray: 4 3; }
+  .cx { stroke: #9085e9; }
+  .cb { stroke: #c98500; }
+  .bar-cx { fill: #9085e9; }
+  .bar-cb { fill: #c98500; }
+  .wt .mproc { stroke: #9aa7b4; stroke-width: 2.2; stroke-linecap: round; }
+  .wt .msoma { fill: #9aa7b4; }
+  .hom .mproc { stroke: #d55181; stroke-width: 2.2; stroke-linecap: round; }
+  .hom .msoma { fill: #d55181; }
+  .tile { stroke-width: 1.5; }
+  .tile.up { fill: #e66767; fill-opacity: .14; stroke: #e66767; }
+  .tile.down { fill: #3987e5; fill-opacity: .14; stroke: #3987e5; }
+  .tri-up { fill: #e66767; transform-box: fill-box; transform-origin: center; animation: bobUp 2.6s ease-in-out infinite; }
+  .tri-down { fill: #3987e5; transform-box: fill-box; transform-origin: center; animation: bobDown 2.6s ease-in-out infinite; }
+  .qbox { fill: #1c2033; }
+  .qmark { fill: #9085e9; }
+  .qmark-t { font-size: 13px; font-weight: 700; fill: #0d1117; }
+  .chev { fill: none; stroke: #9aa7b4; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .chip { fill: #0d1117; stroke: #2d3640; stroke-width: 1.2; animation: glow 8.4s linear infinite; }
+  .track { stroke: #2d3640; stroke-width: 2; stroke-linecap: round; }
+  .packet { fill: #34b98b; animation: travel 8.4s linear infinite; }
+  .dot-cx { fill: #9085e9; }
+  .dot-cb { fill: #c98500; }
+  .rule { stroke: #2d3640; stroke-width: 1; }
+  @keyframes pulse { 0%, 100% { opacity: .45; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.2); } }
+  @keyframes bobUp { 0%, 100% { transform: translateY(1.5px); } 50% { transform: translateY(-1.5px); } }
+  @keyframes bobDown { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
+  @keyframes travel { 0% { transform: translateX(0); opacity: 0; } 3% { opacity: 1; } 97% { opacity: 1; } 100% { transform: translateX(836px); opacity: 0; } }
+  @keyframes glow { 0%, 14.3%, 100% { stroke: #2d3640; stroke-width: 1.2; } 3%, 9% { stroke: #34b98b; stroke-width: 2.2; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+<rect x="0.5" y="0.5" width="999" height="729" rx="18" class="bgcard"/>
+<text x="36" y="44" class="eyebrow">VISUAL ABSTRACT  ·  BULK RNA-SEQ  ·  PRIMARY FAMILIAL BRAIN CALCIFICATION (PFBC)</text>
+<text x="36" y="79" class="title">How loss of MYORG reshapes the astrocyte transcriptome</text>
+<text x="36" y="106" class="sub">Primary mouse astrocytes  ·  wild-type vs Myorg<tspan dy="-5" font-size="9">−/−</tspan><tspan dy="5"> </tspan> ·  cortex vs cerebellum  ·  with vs without serum</text>
+<rect x="36" y="128" width="296" height="368" rx="12" class="panel"/><text x="52" y="154" class="eyebrow">QUESTION</text><text x="52" y="176" class="h2">MYORG and brain calcification</text>
+<g transform="translate(50,194)">
+<path class="brain" d="M92,86 C96,100 98,112 96,128 L107,128 C107,113 106,100 109,86 Z"/>
+<path class="brain" d="M102,94 C102,82 140,78 148,91 C153,104 134,113 119,111 C108,109 102,103 102,94 Z"/>
+<path class="sulcus" d="M110,96 C122,90 136,90 145,95 M108,102 C120,98 134,99 143,102"/>
+<path class="brain" d="M16,78 C4,58 12,24 44,12 C72,1 114,2 136,19 C155,33 160,56 151,72 C145,83 132,86 120,84 C108,82 100,86 93,90 C80,93 70,88 59,92 C42,98 24,94 16,78 Z"/>
+<path class="sulcus" d="M74,9 C76,28 68,42 74,58 M38,64 C58,58 80,60 100,68 M114,12 C107,27 115,40 110,52 M30,34 C40,30 48,36 56,30"/>
+<circle cx="64" cy="54" r="3.4" class="calc" style="animation-delay:0.00s"/>
+<circle cx="71" cy="49" r="2.6" class="calc" style="animation-delay:0.45s"/>
+<circle cx="86" cy="63" r="3" class="calc" style="animation-delay:0.90s"/>
+<circle cx="122" cy="99" r="3.2" class="calc" style="animation-delay:1.35s"/>
+<circle cx="130" cy="97" r="2.4" class="calc" style="animation-delay:1.80s"/>
+</g>
+<text x="130" y="342" class="small" text-anchor="middle">calcified deep brain regions</text>
+<rect x="304" y="190" width="14" height="138" rx="7" class="vessel"/>
+<circle cx="302" cy="210" r="3" class="calc" style="animation-delay:0.30s"/>
+<circle cx="319" cy="236" r="2.6" class="calc" style="animation-delay:0.80s"/>
+<circle cx="303" cy="294" r="3.2" class="calc" style="animation-delay:1.30s"/>
+<circle cx="320" cy="314" r="2.4" class="calc" style="animation-delay:1.80s"/>
+<g class="astro">
+<path d="M260.0,260.0 Q243.8,271.1 226.5,272.2" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 Q243.3,255.3 232.7,244.2" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 Q258.2,278.4 248.5,291.6" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 Q250.9,246.6 249.9,232.4" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 Q272.1,272.4 275.8,287.3" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 Q262.8,245.2 271.5,235.3" class="proc" stroke-width="4.7"/>
+<path d="M260.0,260.0 L299.0,258.0" class="proc" stroke-width="4.7"/>
+<ellipse cx="301" cy="258" rx="4" ry="9" class="foot"/>
+<circle cx="260" cy="260" r="15" class="soma"/>
+</g>
+<path class="er" d="M252,256 q4,-4 8,0 t8,0 M252,263 q4,-4 8,0 t8,0"/>
+<path class="leader" d="M258,272 L258,296"/>
+<circle cx="254" cy="306" r="9" class="koRing"/>
+<path class="koX" d="M250,302 L258,310 M258,302 L250,310"/>
+<text x="268" y="310" class="lab">MYORG</text>
+<text x="266" y="342" class="small" text-anchor="middle">astrocyte</text>
+<text x="52" y="368.0" class="body">In PFBC, calcium phosphate builds up</text>
+<text x="52" y="384.5" class="body">in the basal ganglia, thalamus and</text>
+<text x="52" y="401.0" class="body">cerebellum. MYORG is an ER enzyme</text>
+<text x="52" y="417.5" class="body">made by astrocytes; losing both</text>
+<text x="52" y="434.0" class="body">copies causes the recessive form.</text>
+<rect x="48" y="446" width="272" height="38" rx="8" class="qbox"/>
+<circle cx="68" cy="465" r="10" class="qmark"/>
+<text x="68" y="470" class="qmark-t" text-anchor="middle">?</text>
+<text x="86" y="461" class="q">What changes inside astrocytes</text>
+<text x="86" y="477" class="q">that lack Myorg?</text>
+<rect x="352" y="128" width="296" height="368" rx="12" class="panel"/><text x="368" y="154" class="eyebrow">EXPERIMENT</text><text x="368" y="176" class="h2">2 × 2 × 2 culture design</text>
+<text x="460.0" y="202" class="lab" text-anchor="middle">Cortex</text>
+<text x="572.0" y="202" class="lab" text-anchor="middle">Cerebellum</text>
+<rect x="410" y="208" width="100" height="4" rx="2" class="bar-cx"/>
+<rect x="522" y="208" width="100" height="4" rx="2" class="bar-cb"/>
+<text x="432" y="229" class="small" text-anchor="middle">SCM</text>
+<text x="488" y="229" class="small" text-anchor="middle">SFM</text>
+<text x="544" y="229" class="small" text-anchor="middle">SCM</text>
+<text x="600" y="229" class="small" text-anchor="middle">SFM</text>
+<rect x="366" y="236" width="268" height="98" rx="10" fill="none" class="rule"/>
+<text x="376" y="264" class="lab">WT</text>
+<circle cx="432" cy="260" r="19" class="well scm cx"/>
+<g class="wt">
+<line x1="432" y1="260" x2="442.6" y2="257.2" class="mproc"/>
+<line x1="432" y1="260" x2="434.8" y2="249.4" class="mproc"/>
+<line x1="432" y1="260" x2="424.2" y2="252.2" class="mproc"/>
+<line x1="432" y1="260" x2="421.4" y2="262.8" class="mproc"/>
+<line x1="432" y1="260" x2="429.2" y2="270.6" class="mproc"/>
+<line x1="432" y1="260" x2="439.8" y2="267.8" class="mproc"/>
+<circle cx="432" cy="260" r="4.5" class="msoma"/></g>
+<circle cx="488" cy="260" r="19" class="well sfm cx"/>
+<g class="wt">
+<line x1="488" y1="260" x2="498.6" y2="257.2" class="mproc"/>
+<line x1="488" y1="260" x2="490.8" y2="249.4" class="mproc"/>
+<line x1="488" y1="260" x2="480.2" y2="252.2" class="mproc"/>
+<line x1="488" y1="260" x2="477.4" y2="262.8" class="mproc"/>
+<line x1="488" y1="260" x2="485.2" y2="270.6" class="mproc"/>
+<line x1="488" y1="260" x2="495.8" y2="267.8" class="mproc"/>
+<circle cx="488" cy="260" r="4.5" class="msoma"/></g>
+<circle cx="544" cy="260" r="19" class="well scm cb"/>
+<g class="wt">
+<line x1="544" y1="260" x2="554.6" y2="257.2" class="mproc"/>
+<line x1="544" y1="260" x2="546.8" y2="249.4" class="mproc"/>
+<line x1="544" y1="260" x2="536.2" y2="252.2" class="mproc"/>
+<line x1="544" y1="260" x2="533.4" y2="262.8" class="mproc"/>
+<line x1="544" y1="260" x2="541.2" y2="270.6" class="mproc"/>
+<line x1="544" y1="260" x2="551.8" y2="267.8" class="mproc"/>
+<circle cx="544" cy="260" r="4.5" class="msoma"/></g>
+<circle cx="600" cy="260" r="19" class="well sfm cb"/>
+<g class="wt">
+<line x1="600" y1="260" x2="610.6" y2="257.2" class="mproc"/>
+<line x1="600" y1="260" x2="602.8" y2="249.4" class="mproc"/>
+<line x1="600" y1="260" x2="592.2" y2="252.2" class="mproc"/>
+<line x1="600" y1="260" x2="589.4" y2="262.8" class="mproc"/>
+<line x1="600" y1="260" x2="597.2" y2="270.6" class="mproc"/>
+<line x1="600" y1="260" x2="607.8" y2="267.8" class="mproc"/>
+<circle cx="600" cy="260" r="4.5" class="msoma"/></g>
+<text x="376" y="312" class="lab">HOM</text>
+<circle cx="432" cy="308" r="19" class="well scm cx"/>
+<g class="hom">
+<line x1="432" y1="308" x2="442.6" y2="305.2" class="mproc"/>
+<line x1="432" y1="308" x2="434.8" y2="297.4" class="mproc"/>
+<line x1="432" y1="308" x2="424.2" y2="300.2" class="mproc"/>
+<line x1="432" y1="308" x2="421.4" y2="310.8" class="mproc"/>
+<line x1="432" y1="308" x2="429.2" y2="318.6" class="mproc"/>
+<line x1="432" y1="308" x2="439.8" y2="315.8" class="mproc"/>
+<circle cx="432" cy="308" r="4.5" class="msoma"/></g>
+<circle cx="488" cy="308" r="19" class="well sfm cx"/>
+<g class="hom">
+<line x1="488" y1="308" x2="498.6" y2="305.2" class="mproc"/>
+<line x1="488" y1="308" x2="490.8" y2="297.4" class="mproc"/>
+<line x1="488" y1="308" x2="480.2" y2="300.2" class="mproc"/>
+<line x1="488" y1="308" x2="477.4" y2="310.8" class="mproc"/>
+<line x1="488" y1="308" x2="485.2" y2="318.6" class="mproc"/>
+<line x1="488" y1="308" x2="495.8" y2="315.8" class="mproc"/>
+<circle cx="488" cy="308" r="4.5" class="msoma"/></g>
+<circle cx="544" cy="308" r="19" class="well scm cb"/>
+<g class="hom">
+<line x1="544" y1="308" x2="554.6" y2="305.2" class="mproc"/>
+<line x1="544" y1="308" x2="546.8" y2="297.4" class="mproc"/>
+<line x1="544" y1="308" x2="536.2" y2="300.2" class="mproc"/>
+<line x1="544" y1="308" x2="533.4" y2="310.8" class="mproc"/>
+<line x1="544" y1="308" x2="541.2" y2="318.6" class="mproc"/>
+<line x1="544" y1="308" x2="551.8" y2="315.8" class="mproc"/>
+<circle cx="544" cy="308" r="4.5" class="msoma"/></g>
+<circle cx="600" cy="308" r="19" class="well sfm cb"/>
+<g class="hom">
+<line x1="600" y1="308" x2="610.6" y2="305.2" class="mproc"/>
+<line x1="600" y1="308" x2="602.8" y2="297.4" class="mproc"/>
+<line x1="600" y1="308" x2="592.2" y2="300.2" class="mproc"/>
+<line x1="600" y1="308" x2="589.4" y2="310.8" class="mproc"/>
+<line x1="600" y1="308" x2="597.2" y2="318.6" class="mproc"/>
+<line x1="600" y1="308" x2="607.8" y2="315.8" class="mproc"/>
+<circle cx="600" cy="308" r="4.5" class="msoma"/></g>
+<text x="368" y="356" class="small">SCM = with serum  ·  SFM = serum-free</text>
+<text x="368" y="372" class="small">HOM = Myorg<tspan dy="-5" font-size="8">−/−</tspan><tspan dy="5"> </tspan>knockout  ·  WT = wild-type</text>
+<text x="401.0" y="414" class="num" text-anchor="middle">27</text>
+<text x="401.0" y="431" class="small" text-anchor="middle">libraries</text>
+<text x="467.0" y="414" class="num" text-anchor="middle">8</text>
+<text x="467.0" y="431" class="small" text-anchor="middle">groups</text>
+<line x1="434.0" y1="390" x2="434.0" y2="434" class="rule"/>
+<text x="533.0" y="414" class="num" text-anchor="middle">2</text>
+<text x="533.0" y="431" class="small" text-anchor="middle">seq. runs</text>
+<line x1="500.0" y1="390" x2="500.0" y2="434" class="rule"/>
+<text x="599.0" y="414" class="num" text-anchor="middle">12</text>
+<text x="599.0" y="431" class="small" text-anchor="middle">contrasts</text>
+<line x1="566.0" y1="390" x2="566.0" y2="434" class="rule"/>
+<text x="368" y="460.0" class="body">Standard + low-input mRNA-seq runs;</text>
+<text x="368" y="476.5" class="body">sequencing run kept in the model.</text>
+<rect x="668" y="128" width="296" height="368" rx="12" class="panel"/><text x="684" y="154" class="eyebrow">FINDINGS</text><text x="684" y="176" class="h2">HOM astrocytes without serum</text>
+<text x="832.0" y="200" class="lab" text-anchor="middle">Cortex</text>
+<text x="910.0" y="200" class="lab" text-anchor="middle">Cerebellum</text>
+<rect x="796" y="206" width="72" height="4" rx="2" class="bar-cx"/>
+<rect x="874" y="206" width="72" height="4" rx="2" class="bar-cb"/>
+<text x="684" y="244" class="lab">Apoptosis</text>
+<rect x="796" y="218" width="72" height="42" rx="7" class="tile down"/>
+<polygon points="813,246 820,234.1 806,234.1" class="tri-down"/>
+<text x="827" y="243" class="lab">down</text>
+<rect x="874" y="218" width="72" height="42" rx="7" class="tile up"/>
+<polygon points="891,232 898,243.9 884,243.9" class="tri-up"/>
+<text x="905" y="243" class="lab">up</text>
+<text x="684" y="286" class="lab">Oxidative</text>
+<text x="684" y="301" class="lab">phosphorylation</text>
+<rect x="796" y="268" width="72" height="42" rx="7" class="tile down"/>
+<polygon points="813,296 820,284.1 806,284.1" class="tri-down"/>
+<text x="827" y="293" class="lab">down</text>
+<rect x="874" y="268" width="72" height="42" rx="7" class="tile up"/>
+<polygon points="891,282 898,293.9 884,293.9" class="tri-up"/>
+<text x="905" y="293" class="lab">up</text>
+<text x="684" y="336" class="lab">TNFα signaling</text>
+<text x="684" y="351" class="lab">via NF-κB</text>
+<rect x="796" y="318" width="72" height="42" rx="7" class="tile up"/>
+<polygon points="813,332 820,343.9 806,343.9" class="tri-up"/>
+<text x="827" y="343" class="lab">up</text>
+<rect x="874" y="318" width="72" height="42" rx="7" class="tile up"/>
+<polygon points="891,332 898,343.9 884,343.9" class="tri-up"/>
+<text x="905" y="343" class="lab">up</text>
+<text x="684" y="396.0" class="body">Apoptosis and OxPhos fall in cortex</text>
+<text x="684" y="412.5" class="body">but rise in cerebellum. NF-κB</text>
+<text x="684" y="429.0" class="body">inflammatory signaling rises</text>
+<text x="684" y="445.5" class="body">consistently in serum-free medium.</text>
+<line x1="684" y1="462" x2="948" y2="462" class="rule"/>
+<polygon points="692,474 697,482.5 687,482.5" class="tri-up"/>
+<text x="701" y="483" class="small">enriched</text>
+<polygon points="760,484 765,475.5 755,475.5" class="tri-down"/>
+<text x="769" y="483" class="small">depleted  ·  GSEA padj &lt; 0.05</text>
+<path class="chev" d="M339,298 l6,6 l-6,6"/>
+<path class="chev" d="M655,298 l6,6 l-6,6"/>
+<rect x="36" y="512" width="928" height="110" rx="12" class="panel"/>
+<text x="52" y="538" class="eyebrow">WORKFLOW</text>
+<text x="140" y="538" class="small">Bash on an HPC cluster (SLURM), then R / Bioconductor</text>
+<line x1="111.7" y1="608" x2="888.3" y2="608" class="track"/>
+<circle cx="111.7" cy="608" r="4.5" class="packet"/>
+<rect x="52.0" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:0.0s"/>
+<text x="61.0" y="565" class="step-n">1</text>
+<text x="72.0" y="566" class="step-role">Reads</text>
+<text x="61.0" y="581" class="step-tool">27 × paired-end</text>
+<text x="61.0" y="594" class="small">FASTQ</text>
+<rect x="181.4" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:1.2s"/>
+<text x="190.4" y="565" class="step-n">2</text>
+<text x="201.4" y="566" class="step-role">Trim + QC</text>
+<text x="190.4" y="581" class="step-tool">Trim Galore</text>
+<text x="190.4" y="594" class="small">FastQC · ≥ 26 nt</text>
+<rect x="310.9" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:2.4s"/>
+<text x="319.9" y="565" class="step-n">3</text>
+<text x="330.9" y="566" class="step-role">Align</text>
+<text x="319.9" y="581" class="step-tool">STAR</text>
+<text x="319.9" y="594" class="small">sorted BAM</text>
+<rect x="440.3" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:3.6s"/>
+<text x="449.3" y="565" class="step-n">4</text>
+<text x="460.3" y="566" class="step-role">Count</text>
+<text x="449.3" y="581" class="step-tool">summarizeOverlaps</text>
+<text x="449.3" y="594" class="small">GENCODE vM36</text>
+<rect x="569.7" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:4.8s"/>
+<text x="578.7" y="565" class="step-n">5</text>
+<text x="589.7" y="566" class="step-role">Normalize</text>
+<text x="578.7" y="581" class="step-tool">edgeR · TMM</text>
+<text x="578.7" y="594" class="small">filterByExpr</text>
+<rect x="699.1" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:6.0s"/>
+<text x="708.1" y="565" class="step-n">6</text>
+<text x="719.1" y="566" class="step-role">Model</text>
+<text x="708.1" y="581" class="step-tool">limma-voom</text>
+<text x="708.1" y="594" class="small">+ run, eBayes</text>
+<rect x="828.6" y="548" width="119.4" height="50" rx="8" class="chip" style="animation-delay:7.2s"/>
+<text x="837.6" y="565" class="step-n">7</text>
+<text x="848.6" y="566" class="step-role">Enrich</text>
+<text x="837.6" y="581" class="step-tool">fgsea · enrichGO</text>
+<text x="837.6" y="594" class="small">Hallmark + GO</text>
+<text x="36" y="652" class="eyebrow">TAKE-HOME</text>
+<text x="36" y="676" class="take">Without Myorg, serum-starved astrocytes turn on <tspan class="em">NF-κB inflammation</tspan>, while <tspan class="em">cell-death and energy</tspan></text>
+<text x="36" y="697" class="take"><tspan class="em">programs</tspan> move in opposite directions in cortex and cerebellum: one mutation, region-specific astrocyte responses.</text>
+</svg>

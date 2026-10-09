@@ -1,77 +1,170 @@
-# Bulk_RNAseq_PFBC_project for MYORG Dysfunction
+<a href="https://chuabrandon26.github.io/Bulk-RNA-Sequencing-of-MYORG-mutant-astrocytes-in-PFBC/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/visual-abstract-dark.svg">
+    <img alt="Visual abstract. Question: MYORG, an ER glycosidase made by astrocytes, causes autosomal-recessive primary familial brain calcification (PFBC) when both copies are lost. Experiment: primary cortical and cerebellar astrocytes from wild-type and Myorg knockout mice, grown with or without serum; 27 libraries, 8 groups, 2 sequencing runs, 12 contrasts. Workflow: Trim Galore, STAR, summarizeOverlaps, edgeR TMM, limma-voom, fgsea and clusterProfiler. Findings: in serum-free medium, apoptosis and oxidative phosphorylation go down in knockout cortex and up in knockout cerebellum, and TNF-alpha signaling via NF-kB goes up." src="docs/assets/visual-abstract-light.svg" width="100%">
+  </picture>
+</a>
 
-Overview:
-This project implements a bulk transcriptomic pipeline to study astrocytic gene regulation and its contribution to the pathogenesis of Primary Familial Brain Calcification (PFBC). The focus is on the impact of biallelic loss-of-function mutations in the MYORG gene, which encodes an ER-localized glycosidase, and how its dysfunction drives inflammatory signaling, apoptosis, and metabolic dysregulation in astrocytes under different culture conditions.
+<h1 align="center">MYORG-deficient astrocytes in primary familial brain calcification</h1>
 
-The analysis framework incorporates differential expression modeling, pathway-level enrichment, and functional ontology analysis to ensure deep biological interpretability of the transcriptomic shifts.
+<p align="center">
+  Bulk RNA-seq of primary mouse astrocytes · wild-type vs <i>Myorg</i><sup>−/−</sup> · cortex vs cerebellum · with vs without serum
+</p>
 
-# Data
-1) Bulk RNA sequencing data obtained from primary mouse astrocytes (cortex and cerebellum)
-2) Genotypes: Wild-type (WT) and MYORG-knockout (HOM) mice
-3) Culture Conditions: Grown in either serum-containing (SCM) or serum-free (SFM) medium
-4) Reference Genome: Mus musculus (mm10/GRCm38) with GENCODE M36 annotations
+<p align="center">
+  <img alt="R" src="https://img.shields.io/badge/R-Bioconductor-276DC3?logo=r&logoColor=white">
+  <img alt="limma-voom" src="https://img.shields.io/badge/DE-limma--voom%20%2B%20edgeR-4a3aa7">
+  <img alt="GSEA" src="https://img.shields.io/badge/enrichment-fgsea%20%C2%B7%20clusterProfiler-1f8f6a">
+  <img alt="STAR" src="https://img.shields.io/badge/aligner-STAR%202.7.3a-566573">
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-e09a00">
+</p>
 
-## Pipeline Architecture
-
-### Core Transcriptomic Workflows
-
-#### Preprocessing & Alignment
-- Adapter trimming and quality control via **Trim Galore** and FastQC
-- Spliced read alignment to the reference genome using **STAR aligner**
-- Read quantification into gene-by-sample count matrices using **GenomicAlignments** (summarizeOverlaps)
-
-#### Differential Expression (limma-voom)
-- Library sizes normalized via Trimmed Mean of M-values (TMM) using `edgeR`
-- `voomWithQualityWeights` applied to estimate mean-variance relationships and assign precision weights
-- Linear modeling and empirical Bayes moderation (`eBayes`) used for robust variance estimation
-
----
-
-## Analysis Strategy
-
-- Separate pairwise contrasts (10 total) are analyzed to isolate:
-  - **Genotype effects** (e.g., WT vs HOM)
-  - **Environmental/Serum effects** (e.g., SCM vs SFM)
-  - **Regional effects** (e.g., Cortex vs Cerebellum)
-- Multidimensional scaling (MDS) is used to validate sample clustering by genotype, region, and medium prior to modeling.
+<p align="center">
+  <b><a href="https://chuabrandon26.github.io/Bulk-RNA-Sequencing-of-MYORG-mutant-astrocytes-in-PFBC/">Open the interactive explorer</a></b>
+  &nbsp;·&nbsp; <a href="#the-question">Question</a>
+  &nbsp;·&nbsp; <a href="#experimental-design">Design</a>
+  &nbsp;·&nbsp; <a href="#workflow">Workflow</a>
+  &nbsp;·&nbsp; <a href="#key-findings">Findings</a>
+  &nbsp;·&nbsp; <a href="#repository-layout">Scripts</a>
+</p>
 
 ---
 
-## Downstream Enrichment Approaches
+## At a glance
 
-Three complementary approaches were explored to interpret the biological meaning of the DEGs:
+| **27** | **8** | **2** | **12** | **50** |
+|:---:|:---:|:---:|:---:|:---:|
+| paired-end RNA-seq libraries | groups (genotype × region × medium) | sequencing runs, modeled as a covariate | limma-voom contrasts | MSigDB Hallmark gene sets tested |
 
-### 1. Differential Expression Analysis (DEA)
-- Statistically models raw count data
-- Computes log-fold changes and adjusted p-values
-- Identifies single genes with high-confidence condition-specific expression shifts
+> **Take-home:** without *Myorg*, serum-starved astrocytes turn on **NF-κB inflammatory signaling**, while **cell-death and mitochondrial energy programs** move in opposite directions in cortex and cerebellum. One mutation produces region-specific astrocyte responses.
 
-### 2. Gene Set Enrichment Analysis (GSEA)
-- Utilizes the `fgsea` algorithm with MSigDB mouse hallmark gene sets
-- Ranks all expressed genes by a combined metric: $sign(log_{2}FC) \times -\log_{10}(p\text{-value})$
-- Identifies broad, coordinated pathway-level shifts without arbitrary p-value cutoffs
+## The question
 
-### 3. Gene Ontology (GO) Enrichment
-- Utilizes `clusterProfiler` for over-representation analysis
-- Maps gene symbols to Entrez IDs via `biomaRt`
-- Evaluates significant DEGs across Biological Process (BP), Cellular Component (CC), and Molecular Function (MF)
+**Primary familial brain calcification (PFBC)** is a rare neurodegenerative disorder in which calcium phosphate builds up in the basal ganglia, thalamus and cerebellum, often around small blood vessels. Patients can develop movement disorders, psychiatric symptoms and cognitive decline.
 
----
+Biallelic loss-of-function mutations in **MYORG** cause the autosomal-recessive form of PFBC. MYORG encodes a glycosidase in the endoplasmic reticulum, and in the brain it is made by **astrocytes**. That makes astrocytes the obvious place to look for what goes wrong.
 
-## Experiments & Key Findings
+This project asks: **what changes inside astrocytes that lack *Myorg*, and does it depend on brain region and on the cells' environment?** To answer it, the pipeline combines differential expression modeling, pathway-level enrichment and functional ontology analysis.
 
-- Models trained and evaluated across 10 defined pairwise contrasts.
-- Comparisons performed between:
-  - Control (WT) vs Mutated (HOM) regulatory programs
-  - Baseline (SCM) vs Stress/Quiescent (SFM) environments
-- Analysis identified condition-dependent regulatory rewiring:
-  - **Apoptosis & Oxidative Phosphorylation:** Strongly downregulated in HOM SFM cortex, but upregulated in HOM SFM cerebellum.
-  - **TNFα/NF-кВ Signaling:** Consistently activated in SFM conditions, linking MYORG dysfunction to maladaptive inflammatory states.
+## Experimental design
 
----
-## The Script
+Primary astrocytes were cultured from the **cortex (Cx)** and **cerebellum (CB)** of **wild-type (WT)** and ***Myorg*-knockout (HOM)** mice, in **serum-containing (SCM)** or **serum-free (SFM)** medium. Serum pushes cultured astrocytes toward a reactive, injury-like state, while serum-free medium keeps them closer to how they behave in the brain, so the medium is a stress/environment axis.
 
-This is the core project logic used in this repository. It covers: loading BAM files to generate count matrices, filtering and normalizing via TMM, performing limma-voom linear modeling, executing GSEA for pathway analysis, and extracting GO enrichment profiles.
+|  | **Cortex · SCM** | **Cortex · SFM** | **Cerebellum · SCM** | **Cerebellum · SFM** |
+|---|:---:|:---:|:---:|:---:|
+| **WT** | `SCM_Cx_WT` | `SFM_Cx_WT` | `SCM_CB_WT` | `SFM_CB_WT` |
+| **HOM** (*Myorg*<sup>−/−</sup>) | `SCM_Cx_HOM` | `SFM_Cx_HOM` | `SCM_CB_HOM` | `SFM_CB_HOM` |
+
+- **Libraries:** 27 paired-end libraries from two sequencing runs: 18 strand-specific eukaryotic mRNA-seq (`CN274-001U…`) and 9 low-input mRNA-seq (`CN274-002T…`). The run is included as a `batch` term in the model.
+- **Reference:** *Mus musculus*, GENCODE vM36 gene annotation.
+- **Quality control:** multidimensional scaling (MDS) of voom-transformed expression to check clustering by genotype, region and medium before modeling.
+
+<details>
+<summary><b>The 12 contrasts</b> (click to expand)</summary>
+
+<br>
+
+A positive log<sub>2</sub> fold change means higher in the first group.
+
+| # | Contrast | Compares | Factor that changes |
+|:-:|---|---|---|
+| 1 | `WT_SFM_vs_WT_SCM_Cx` | `SFM_Cx_WT − SCM_Cx_WT` | medium |
+| 2 | `HOM_SFM_vs_WT_SFM_Cx` | `SFM_Cx_HOM − SFM_Cx_WT` | genotype |
+| 3 | `HOM_SFM_vs_HOM_SCM_Cx` | `SFM_Cx_HOM − SCM_Cx_HOM` | medium |
+| 4 | `HOM_SCM_vs_WT_SFM_Cx` | `SCM_Cx_HOM − SFM_Cx_WT` | genotype + medium |
+| 5 | `HOM_SCM_vs_WT_SCM_Cx` | `SCM_Cx_HOM − SCM_Cx_WT` | genotype |
+| 6 | `WT_SFM_vs_WT_SCM_CB` | `SFM_CB_WT − SCM_CB_WT` | medium |
+| 7 | `HOM_SFM_vs_WT_SFM_CB` | `SFM_CB_HOM − SFM_CB_WT` | genotype |
+| 8 | `HOM_SFM_vs_HOM_SCM_CB` | `SFM_CB_HOM − SCM_CB_HOM` | medium |
+| 9 | `HOM_SCM_vs_WT_SFM_CB` | `SCM_CB_HOM − SFM_CB_WT` | genotype + medium |
+| 10 | `HOM_SCM_vs_WT_SCM_CB` | `SCM_CB_HOM − SCM_CB_WT` | genotype |
+| 11 | `WT_SFM_Cx_vs_WT_SFM_CB` | `SFM_Cx_WT − SFM_CB_WT` | region |
+| 12 | `WT_SCM_Cx_vs_WT_SCM_CB` | `SCM_Cx_WT − SCM_CB_WT` | region |
+
+</details>
+
+## Workflow
+
+```mermaid
+flowchart TB
+  subgraph HPC["Bash on an HPC cluster (SLURM)"]
+    direction LR
+    A["27 paired-end FASTQ<br/>2 sequencing runs"] --> B["Trim Galore + FastQC<br/>min length 26 nt"]
+    B --> C["STAR 2.7.3a<br/>sorted BAM"]
+  end
+  subgraph R["R / Bioconductor"]
+    direction LR
+    D["summarizeOverlaps<br/>GENCODE vM36 genes"] --> E["edgeR<br/>filterByExpr + TMM"]
+    E --> F["limma-voom<br/>quality weights<br/>~0 + group + batch"]
+    F --> G["12 contrasts<br/>eBayes, BH correction"]
+    G --> H["fgsea<br/>MSigDB Hallmark"]
+    G --> I["clusterProfiler<br/>GO BP / CC / MF"]
+  end
+  HPC --> R
+```
+
+<details>
+<summary><b>Methods in detail</b> (click to expand)</summary>
+
+<br>
+
+**Preprocessing and alignment**
+- Adapter and quality trimming with **Trim Galore** (`--paired --length 26 --phred33`), with **FastQC** on the trimmed reads.
+- Spliced alignment with **STAR 2.7.3a** to a mouse genome index, writing coordinate-sorted BAM files (SLURM jobs, 8 threads).
+- Gene-level counts with **GenomicAlignments::summarizeOverlaps** (Union mode) on exons grouped by gene from the GENCODE vM36 GTF; Ensembl IDs mapped to symbols with `org.Mm.eg.db`.
+
+**Differential expression (limma-voom)**
+- Lowly expressed genes removed with `filterByExpr`; library sizes normalized with trimmed mean of M-values (TMM) in **edgeR**.
+- `voomWithQualityWeights` models the mean-variance trend and down-weights noisier samples.
+- Design `~ 0 + group + batch`, then `lmFit`, `contrasts.fit` and empirical Bayes moderation (`eBayes`); p-values adjusted with Benjamini-Hochberg.
+
+**Enrichment**
+
+| Approach | Tool | Input | Settings |
+|---|---|---|---|
+| Differential expression | limma-voom | raw counts | log fold changes and BH-adjusted p-values per contrast |
+| Gene set enrichment (GSEA) | `fgsea` | all expressed genes, ranked by $\mathrm{sign}(\log_2 FC) \times -\log_{10}(p)$ | MSigDB mouse Hallmark (`mh.all.v2024.1`), `minSize = 10`, padj < 0.05 |
+| Gene Ontology over-representation | `clusterProfiler::enrichGO` | significant up- and down-regulated genes, separately (Entrez IDs via `biomaRt`) | BP, CC and MF; Bonferroni, p and q < 0.05 |
+
+GSEA needs no arbitrary DEG cut-off and picks up coordinated, pathway-wide shifts. GO over-representation describes what the significant genes have in common.
+
+</details>
+
+## Key findings
+
+Hallmark GSEA (fgsea, adjusted p < 0.05) for *Myorg*<sup>−/−</sup> (HOM) astrocytes in serum-free medium:
+
+| Hallmark gene set | Cortex | Cerebellum |
+|---|:---:|:---:|
+| `HALLMARK_APOPTOSIS` | ▼ down | ▲ up |
+| `HALLMARK_OXIDATIVE_PHOSPHORYLATION` | ▼ down | ▲ up |
+| `HALLMARK_TNFA_SIGNALING_VIA_NFKB` | ▲ up | ▲ up |
+
+- **Apoptosis and oxidative phosphorylation** are strongly downregulated in HOM SFM cortex but upregulated in HOM SFM cerebellum. The same mutation pushes cell-death and energy-metabolism programs in opposite directions depending on brain region.
+- **TNFα signaling via NF-κB** is consistently activated in serum-free conditions, linking MYORG dysfunction to a maladaptive inflammatory state.
+
+Together these point to condition-dependent rewiring of astrocyte gene regulation, with inflammation as a shared response and cell death and metabolism as region-specific ones.
+
+## Repository layout
+
+| Step | Script | What it does |
+|---|---|---|
+| Trim + QC | [`Trim_galore_Eukaryotic_RNA_sequencing_script_after_edit.sh`](Trim_galore_Eukaryotic_RNA_sequencing_script_after_edit.sh) | Trim Galore + FastQC, run 1 (18 libraries) |
+| Trim + QC | [`Trim_galore_low_input_RNA_sequencing_script_after_edit.sh`](Trim_galore_low_input_RNA_sequencing_script_after_edit.sh) | Trim Galore + FastQC, run 2 (9 low-input libraries) |
+| Align | [`star_alignment_Eukaryotic_RNA_sequencing_script.sh`](star_alignment_Eukaryotic_RNA_sequencing_script.sh) | STAR alignment, run 1 (SLURM job) |
+| Align | [`star_alignment_low_input_RNA_sequencing_script.sh`](star_alignment_low_input_RNA_sequencing_script.sh) | STAR alignment, run 2 (SLURM job) |
+| Count → model | [`Combined_data_R_script.R`](Combined_data_R_script.R) | Counting, edgeR/TMM, limma-voom, MDS plots, 12 contrasts, DEG tables |
+| GSEA | [`brandon_gsea.R`](brandon_gsea.R) | fgsea on Hallmark sets, per-contrast and combined NES dot plots |
+| GO | [`clusterprofiler_brandon.R`](clusterprofiler_brandon.R) | GO enrichment (BP/CC/MF) for up- and down-regulated genes, summary table |
+| Visuals | [`docs/`](docs/) | Interactive explorer ([`index.html`](docs/index.html)) and the visual abstract ([`make_visual_abstract.py`](docs/assets/make_visual_abstract.py) rebuilds both SVGs) |
+
+## Condensed analysis script
+
+The core R logic in one place: loading BAM files into a count matrix, filtering and TMM normalization, limma-voom modeling, GSEA and GO enrichment.
+
+<details>
+<summary><b>Show the R script</b> (click to expand)</summary>
+
 
 ```R
 # ----------------------------
@@ -264,3 +357,10 @@ for (ont_type in c('BP', 'CC', 'MF')) {
     write.csv(res_df_neg, paste0('Clusterprofiler_GO_', ont_type, '_neg.csv'), row.names = FALSE)
   }
 }
+```
+
+</details>
+
+## License
+
+Released under the [MIT License](LICENSE).

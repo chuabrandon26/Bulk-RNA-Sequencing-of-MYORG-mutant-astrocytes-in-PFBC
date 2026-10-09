@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MYORG Astrocyte Explorer</title>
+<meta name="description" content="Interactive visual abstract of a bulk RNA-seq study of Myorg-deficient mouse astrocytes, a model of primary familial brain calcification (PFBC).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: a single reading column laid out like a lab notebook, with the culture
+   plate map as the interactive centrepiece and every figure readable at rest. */
+:root {
+  --bg: #f6f8fa;
+  --surface: #ffffff;
+  --ink: #15202b;
+  --muted: #566573;
+  --line: #d7dee6;
+  --faint: #e9eef3;
+  --astro: #1f8f6a;
+  --hom: #d6457a;
+  --cortex: #4a3aa7;
+  --cereb: #e09a00;
+  --up: #e34948;
+  --down: #2a78d6;
+  --serum: #fbeccb;
+  --vessel: #f6dce3;
+  --focus: #4a3aa7;
+  --display: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1117; --surface: #151b23; --ink: #e6edf3; --muted: #9aa7b4; --line: #2d3640;
+    --faint: #1f2731; --astro: #34b98b; --hom: #d55181; --cortex: #9085e9; --cereb: #c98500;
+    --up: #e66767; --down: #3987e5; --serum: #3b3220; --vessel: #3a2129; --focus: #9085e9;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1117; --surface: #151b23; --ink: #e6edf3; --muted: #9aa7b4; --line: #2d3640;
+  --faint: #1f2731; --astro: #34b98b; --hom: #d55181; --cortex: #9085e9; --cereb: #c98500;
+  --up: #e66767; --down: #3987e5; --serum: #3b3220; --vessel: #3a2129; --focus: #9085e9;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--sans);
+}
+a { color: var(--cortex); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+code, pre { font-family: var(--mono); font-size: 0.86em; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 56px 28px; }
+.eyebrow {
+  font: 600 0.74rem/1.3 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+h1 {
+  font: 600 clamp(2.1rem, 3.6vw + 1rem, 3.4rem)/1.08 var(--display);
+  letter-spacing: -0.015em;
+  margin: 0 0 18px;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+.lede { font-size: 1.12rem; max-width: 62ch; margin: 0 0 28px; color: var(--ink); }
+.lede em { font-style: normal; font-weight: 600; }
+sup.ko { font-size: 0.62em; line-height: 0; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0 0 24px;
+}
+.stats div { padding: 14px 12px 12px; border-left: 1px solid var(--line); min-width: 0; }
+.stats div:first-child { border-left: 0; padding-left: 0; }
+.stats dt { font: 600 2rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stats dd { margin: 6px 0 0; font-size: 0.82rem; color: var(--muted); line-height: 1.35; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 999px;
+  font: 500 0.92rem/1.2 var(--sans); text-decoration: none;
+  border: 1px solid var(--line); color: var(--ink); background: var(--surface);
+}
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* ---------- section nav ---------- */
+.secnav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.secnav ul {
+  list-style: none; margin: 0 auto; padding-block: 0; display: flex; gap: 4px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.secnav a {
+  display: block; padding: 12px 12px; white-space: nowrap;
+  font: 500 0.88rem/1 var(--sans); color: var(--muted); text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.secnav a.active, .secnav a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* ---------- sections ---------- */
+section { padding-block: 56px 8px; scroll-margin-top: 52px; }
+h2 {
+  font: 600 clamp(1.6rem, 1.6vw + 1rem, 2.1rem)/1.15 var(--display);
+  margin: 0 0 10px; text-wrap: balance;
+}
+.intro { max-width: 64ch; margin: 0 0 28px; color: var(--ink); }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  min-width: 0;
+}
+.cols { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.small { font-size: 0.84rem; color: var(--muted); }
+.lab { font-weight: 600; }
+
+/* question */
+.question-fig svg { width: 100%; height: auto; display: block; }
+.facts { display: grid; gap: 14px; }
+.fact { border-top: 1px solid var(--line); padding-top: 12px; }
+.fact:first-child { border-top: 0; padding-top: 0; }
+.fact h3 { font: 600 1rem/1.3 var(--sans); margin: 0 0 4px; }
+.fact p { margin: 0; }
+.askbox {
+  margin-top: 6px; padding: 14px 16px; border-radius: 10px;
+  background: color-mix(in srgb, var(--cortex) 10%, var(--surface));
+  font-weight: 600;
+}
+.fig-brain { fill: var(--faint); stroke: var(--muted); stroke-width: 1.4; }
+.fig-sulcus { fill: none; stroke: var(--line); stroke-width: 1.4; stroke-linecap: round; }
+.fig-calc { fill: var(--hom); transform-box: fill-box; transform-origin: center; animation: pulse 3.2s ease-in-out infinite; }
+.fig-vessel { fill: var(--vessel); stroke: var(--hom); stroke-opacity: .55; }
+.fig-astro { stroke: var(--astro); fill: none; stroke-linecap: round; }
+.fig-soma { fill: var(--astro); }
+.fig-er { fill: none; stroke: var(--surface); stroke-width: 1.6; stroke-linecap: round; }
+.fig-text { fill: var(--muted); font: 400 11px var(--sans); }
+.fig-ko { fill: var(--surface); stroke: var(--hom); stroke-width: 2; }
+.fig-kox { stroke: var(--hom); stroke-width: 3; stroke-linecap: round; }
+.fig-lab { fill: var(--ink); font: 600 12px var(--sans); }
+@keyframes pulse { 0%, 100% { opacity: .45; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+/* experiment: plate map */
+.plate {
+  display: grid;
+  grid-template-columns: 48px repeat(4, minmax(0, 1fr));
+  gap: 6px 4px;
+  align-items: center;
+  justify-items: center;
+}
+.plate .region { grid-column: span 2; width: 100%; text-align: center; font-weight: 600; font-size: 0.9rem; padding-bottom: 6px; border-bottom: 4px solid; }
+.plate .region.cx { border-color: var(--cortex); }
+.plate .region.cb { border-color: var(--cereb); }
+.plate .med { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
+.plate .rowlab { justify-self: start; font-weight: 600; font-size: 0.9rem; }
+.well {
+  width: min(64px, 100%); aspect-ratio: 1; max-width: 100%;
+  border-radius: 50%; border: 2.5px solid var(--line);
+  background: var(--surface); cursor: pointer; padding: 0;
+  display: grid; place-items: center; position: relative;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+.well.cx { border-color: var(--cortex); }
+.well.cb { border-color: var(--cereb); }
+.well.scm { background: var(--serum); }
+.well.sfm { border-style: dashed; }
+.well svg { width: 56%; height: 56%; }
+.well .g-wt { stroke: var(--muted); fill: var(--muted); }
+.well .g-hom { stroke: var(--hom); fill: var(--hom); }
+.well:hover { transform: scale(1.06); }
+.plate.has-sel .well:not(.is-a):not(.is-b) { opacity: .35; }
+.well.is-a, .well.is-b { box-shadow: 0 0 0 4px var(--surface), 0 0 0 6px var(--ink); }
+.well .tag {
+  position: absolute; top: -9px; right: -9px;
+  min-width: 22px; height: 22px; border-radius: 11px; padding: 0 6px;
+  font: 700 0.72rem/22px var(--sans); background: var(--ink); color: var(--surface);
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 16px; font-size: 0.82rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--muted); display: inline-block; }
+.sw.scm { background: var(--serum); }
+.sw.sfm { border-style: dashed; background: var(--surface); }
+.sw.hom { background: var(--hom); border-color: var(--hom); }
+.sw.wt { background: var(--muted); }
+
+.contrast-groups { display: grid; gap: 14px; }
+.contrast-groups h3 { font: 600 0.74rem/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 500 0.8rem/1.2 var(--mono); padding: 7px 10px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.readout { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.readout .vs { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: baseline; margin: 0 0 12px; }
+.readout .vs b { font: 700 0.72rem/22px var(--sans); background: var(--ink); color: var(--surface); border-radius: 11px; min-width: 22px; text-align: center; }
+.factors { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.factor { font-size: 0.8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.factor.diff { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.rcode { display: block; padding: 10px 12px; border-radius: 8px; background: var(--faint); overflow-x: auto; white-space: nowrap; }
+
+/* workflow */
+.rail { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; position: relative; margin-bottom: 16px; }
+.step {
+  text-align: left; cursor: pointer; padding: 12px 12px 14px; min-width: 0;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px;
+  font: inherit; display: grid; gap: 2px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.step .n { font: 500 0.72rem/1 var(--mono); color: var(--muted); }
+.step .r { font-weight: 600; font-size: 0.95rem; }
+.step .t { font: 400 0.76rem/1.3 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.step:hover { border-color: var(--muted); }
+.step[aria-selected="true"] { border-color: var(--astro); box-shadow: inset 0 0 0 1px var(--astro); }
+.step[aria-selected="true"] .n { color: var(--astro); }
+.where { display: inline-block; font: 600 0.7rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.stepdetail h3 { font: 600 1.35rem/1.2 var(--display); margin: 0 0 8px; }
+.stepdetail p { margin: 0 0 14px; max-width: 70ch; }
+.stepdetail pre {
+  margin: 0 0 14px; padding: 14px 16px; border-radius: 10px; background: var(--faint);
+  overflow-x: auto; line-height: 1.55;
+}
+.files { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.files a { font: 400 0.8rem/1.2 var(--mono); }
+.stepnav { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.stepnav button { font: 500 0.88rem/1 var(--sans); padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.stepnav button:disabled { opacity: .4; cursor: default; }
+
+/* findings */
+.fgrid { display: grid; gap: 10px; }
+.frow {
+  display: grid; grid-template-columns: minmax(0, 1fr) 112px 112px; gap: 10px; align-items: stretch;
+}
+.fhead { font-weight: 600; font-size: 0.86rem; text-align: center; padding-bottom: 6px; border-bottom: 4px solid; align-self: end; }
+.fhead.cx { border-color: var(--cortex); }
+.fhead.cb { border-color: var(--cereb); }
+.pw {
+  text-align: left; font: inherit; color: var(--ink); cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  display: grid; gap: 2px; min-width: 0;
+}
+.pw .name { font-weight: 600; }
+.pw .id { font: 400 0.72rem/1.3 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.pw[aria-expanded="true"] { border-color: var(--ink); }
+.dir {
+  border-radius: 10px; border: 1.5px solid; display: grid; place-items: center; align-content: center; gap: 4px;
+  font-weight: 600; font-size: 0.86rem; padding: 8px 4px;
+}
+.dir.up { border-color: var(--up); background: color-mix(in srgb, var(--up) 13%, var(--surface)); }
+.dir.down { border-color: var(--down); background: color-mix(in srgb, var(--down) 13%, var(--surface)); }
+.dir svg { width: 18px; height: 18px; }
+.dir.up svg { fill: var(--up); animation: bobUp 2.6s ease-in-out infinite; }
+.dir.down svg { fill: var(--down); animation: bobDown 2.6s ease-in-out infinite; }
+@keyframes bobUp { 0%, 100% { transform: translateY(1.5px); } 50% { transform: translateY(-1.5px); } }
+@keyframes bobDown { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
+.pwinfo { grid-column: 1 / -1; padding: 4px 14px 12px; max-width: 72ch; }
+.pwinfo p { margin: 0 0 6px; }
+.gsea-fig svg { width: 100%; height: auto; display: block; }
+.gsea-fig .axis { stroke: var(--line); }
+.gsea-fig .curve { fill: none; stroke: var(--astro); stroke-width: 2.2; stroke-linejoin: round; }
+.gsea-fig .hit { stroke: var(--ink); stroke-width: 1.2; }
+.gsea-fig .t { fill: var(--muted); font: 400 11px var(--sans); }
+.gsea-fig .tb { fill: var(--ink); font: 600 11px var(--sans); }
+.formula { font-family: var(--mono); background: var(--faint); padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+.takehome {
+  margin-top: 28px; padding: 22px 24px; border-radius: 14px;
+  border: 1px solid var(--line); background: var(--surface);
+  font: 500 clamp(1.1rem, 0.8vw + 0.9rem, 1.35rem)/1.45 var(--display);
+}
+.takehome .eyebrow { font-family: var(--sans); }
+
+/* code */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td code { white-space: nowrap; }
+footer { padding-block: 48px 56px; color: var(--muted); font-size: 0.86rem; }
+
+@media (max-width: 860px) {
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  .rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stats div:nth-child(4) { border-left: 0; padding-left: 0; }
+  .stats div:nth-child(n+4) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 520px) {
+  .hero { padding-block: 36px 20px; }
+  .rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats div { border-left: 0; padding-left: 0; }
+  .stats div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .frow { grid-template-columns: minmax(0, 1fr) 76px 76px; gap: 6px; }
+  .card { padding: 16px; }
+  .plate { grid-template-columns: 40px repeat(4, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <p class="eyebrow">Bulk RNA-seq · Primary familial brain calcification (PFBC)</p>
+  <h1>How loss of MYORG reshapes the astrocyte transcriptome</h1>
+  <p class="lede">Primary astrocytes from the <em>cortex</em> and <em>cerebellum</em> of wild-type and
+    Myorg<sup class="ko">−/−</sup> mice were grown <em>with or without serum</em> and sequenced.
+    Differential expression and pathway analysis show how the cells respond when MYORG, the gene behind
+    autosomal-recessive PFBC, is missing.</p>
+  <dl class="stats">
+    <div><dt>27</dt><dd>paired-end RNA-seq libraries</dd></div>
+    <div><dt>8</dt><dd>groups: genotype × region × medium</dd></div>
+    <div><dt>2</dt><dd>sequencing runs, modeled as a covariate</dd></div>
+    <div><dt>12</dt><dd>limma-voom contrasts</dd></div>
+    <div><dt>50</dt><dd>MSigDB Hallmark gene sets tested</dd></div>
+  </dl>
+  <div class="actions">
+    <a class="btn primary" href="https://github.com/chuabrandon26/Bulk-RNA-Sequencing-of-MYORG-mutant-astrocytes-in-PFBC">View the code on GitHub</a>
+    <a class="btn" href="#findings">Jump to findings</a>
+  </div>
+</header>
+
+<nav class="secnav" aria-label="Sections">
+  <ul class="wrap">
+    <li><a href="#question">Question</a></li>
+    <li><a href="#experiment">Experiment</a></li>
+    <li><a href="#workflow">Workflow</a></li>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#code">Code</a></li>
+  </ul>
+</nav>
+
+<main>
+<section id="question" class="wrap">
+  <p class="eyebrow">Question</p>
+  <h2>A brain-calcification gene that lives in astrocytes</h2>
+  <div class="cols">
+    <figure class="card question-fig" style="margin:0">
+      <svg viewBox="0 0 320 210" role="img" aria-label="Sagittal brain with calcification sites, and an astrocyte touching a capillary with MYORG knocked out">
+        <g transform="translate(6,22)">
+          <path class="fig-brain" d="M92,86 C96,100 98,112 96,128 L107,128 C107,113 106,100 109,86 Z"/>
+          <path class="fig-brain" d="M102,94 C102,82 140,78 148,91 C153,104 134,113 119,111 C108,109 102,103 102,94 Z"/>
+          <path class="fig-sulcus" d="M110,96 C122,90 136,90 145,95 M108,102 C120,98 134,99 143,102"/>
+          <path class="fig-brain" d="M16,78 C4,58 12,24 44,12 C72,1 114,2 136,19 C155,33 160,56 151,72 C145,83 132,86 120,84 C108,82 100,86 93,90 C80,93 70,88 59,92 C42,98 24,94 16,78 Z"/>
+          <path class="fig-sulcus" d="M74,9 C76,28 68,42 74,58 M38,64 C58,58 80,60 100,68 M114,12 C107,27 115,40 110,52 M30,34 C40,30 48,36 56,30"/>
+          <circle class="fig-calc" cx="64" cy="54" r="3.4"/>
+          <circle class="fig-calc" cx="71" cy="49" r="2.6" style="animation-delay:.45s"/>
+          <circle class="fig-calc" cx="86" cy="63" r="3" style="animation-delay:.9s"/>
+          <circle class="fig-calc" cx="122" cy="99" r="3.2" style="animation-delay:1.35s"/>
+          <circle class="fig-calc" cx="130" cy="97" r="2.4" style="animation-delay:1.8s"/>
+        </g>
+        <text class="fig-text" x="86" y="172" text-anchor="middle">calcified deep brain regions</text>
+        <rect class="fig-vessel" x="284" y="18" width="14" height="140" rx="7"/>
+        <circle class="fig-calc" cx="282" cy="40" r="3"/>
+        <circle class="fig-calc" cx="299" cy="66" r="2.6" style="animation-delay:.8s"/>
+        <circle class="fig-calc" cx="283" cy="124" r="3.2" style="animation-delay:1.3s"/>
+        <g class="fig-astro" stroke-width="4.6">
+          <path d="M238,88 Q222,82 207,100"/><path d="M238,88 Q216,70 213,66"/><path d="M238,88 Q226,112 228,121"/>
+          <path d="M238,88 Q232,66 228,58"/><path d="M238,88 Q258,108 254,118"/><path d="M238,88 Q246,64 250,62"/>
+          <path d="M238,88 L279,86"/>
+        </g>
+        <ellipse class="fig-soma" cx="281" cy="86" rx="4" ry="9"/>
+        <circle class="fig-soma" cx="238" cy="88" r="15"/>
+        <path class="fig-er" d="M230,84 q4,-4 8,0 t8,0 M230,91 q4,-4 8,0 t8,0"/>
+        <path d="M236,100 L234,124" stroke="currentColor" style="stroke:var(--muted)"/>
+        <circle class="fig-ko" cx="232" cy="134" r="9"/>
+        <path class="fig-kox" d="M228,130 L236,138 M236,130 L228,138"/>
+        <text class="fig-lab" x="246" y="138">MYORG</text>
+        <text class="fig-text" x="244" y="172" text-anchor="middle">astrocyte at a capillary</text>
+      </svg>
+    </figure>
+    <div class="facts">
+      <div class="fact">
+        <h3>The disease</h3>
+        <p>In PFBC, calcium phosphate builds up in the basal ganglia, thalamus and cerebellum, often
+          around small blood vessels. Patients can develop movement disorders, psychiatric symptoms
+          and cognitive decline.</p>
+      </div>
+      <div class="fact">
+        <h3>The gene</h3>
+        <p>MYORG encodes a glycosidase in the endoplasmic reticulum. In the brain it is made by astrocytes.
+          Losing both copies causes the autosomal-recessive form of PFBC.</p>
+      </div>
+      <div class="fact">
+        <h3>Why culture conditions matter</h3>
+        <p>Serum pushes cultured astrocytes toward a reactive, injury-like state; serum-free medium keeps
+          them closer to how they behave in the brain. Testing both shows whether MYORG loss depends on
+          the cells' environment.</p>
+      </div>
+      <p class="askbox">What changes inside astrocytes that lack Myorg, and does it depend on brain region and environment?</p>
+    </div>
+  </div>
+</section>
+
+<section id="experiment" class="wrap">
+  <p class="eyebrow">Experiment</p>
+  <h2>Eight culture groups, twelve comparisons</h2>
+  <p class="intro">Each well below is one experimental group. Pick a contrast to see which two groups it
+    compares and which factor changes between them, or tap a well to list every contrast that uses it.</p>
+  <div class="cols">
+    <div class="card">
+      <div class="plate" id="plate" role="group" aria-label="Culture plate map">
+        <span></span>
+        <span class="region cx">Cortex</span>
+        <span class="region cb">Cerebellum</span>
+        <span></span>
+        <span class="med">SCM</span><span class="med">SFM</span><span class="med">SCM</span><span class="med">SFM</span>
+      </div>
+      <div class="legend">
+        <span><i class="sw scm"></i>SCM: serum-containing</span>
+        <span><i class="sw sfm"></i>SFM: serum-free</span>
+        <span><i class="sw wt"></i>WT astrocyte</span>
+        <span><i class="sw hom"></i>HOM: Myorg<sup class="ko">−/−</sup></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="contrast-groups" id="contrastGroups"></div>
+      <div class="readout" id="readout" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow" class="wrap">
+  <p class="eyebrow">Workflow</p>
+  <h2>From raw reads to pathways</h2>
+  <p class="intro">Steps 1 to 3 ran as Bash jobs on an HPC cluster (SLURM); steps 4 to 7 ran in R with
+    Bioconductor. Select a step to see the exact parameters used in this repository.</p>
+  <div class="rail" id="rail" role="tablist" aria-label="Workflow steps"></div>
+  <div class="card stepdetail" id="stepdetail" role="tabpanel"></div>
+</section>
+
+<section id="findings" class="wrap">
+  <p class="eyebrow">Findings</p>
+  <h2>Same mutation, opposite regional responses</h2>
+  <p class="intro">Hallmark gene-set enrichment (fgsea, adjusted p &lt; 0.05) for Myorg<sup class="ko">−/−</sup>
+    astrocytes in serum-free medium. Select a pathway to read what it measures.</p>
+  <div class="cols">
+    <div class="card">
+      <div class="fgrid" id="fgrid">
+        <div class="frow" aria-hidden="true">
+          <span></span><span class="fhead cx">Cortex</span><span class="fhead cb">Cerebellum</span>
+        </div>
+      </div>
+    </div>
+    <div class="card gsea-fig">
+      <h3 style="font:600 1rem/1.3 var(--sans);margin:0 0 6px">How to read an enrichment</h3>
+      <p class="small" style="margin:0 0 12px">Genes are ranked by <span class="formula">sign(log2FC) × −log10(p)</span>.
+        GSEA walks down the list and asks whether a pathway's genes pile up at the top (enriched, ▲) or the bottom
+        (depleted, ▼). The drawing is a schematic, not data from this study.</p>
+      <svg viewBox="0 0 360 170" role="img" aria-label="Schematic of a GSEA running enrichment score peaking near the top of the ranked list">
+        <defs>
+          <linearGradient id="rk" x1="0" x2="1">
+            <stop offset="0" style="stop-color:var(--up)"/><stop offset=".5" style="stop-color:var(--faint)"/><stop offset="1" style="stop-color:var(--down)"/>
+          </linearGradient>
+        </defs>
+        <line class="axis" x1="20" y1="80" x2="340" y2="80"/>
+        <path class="curve" id="esCurve" d=""/>
+        <g id="hits"></g>
+        <rect x="20" y="128" width="320" height="10" rx="3" fill="url(#rk)"/>
+        <text class="t" x="20" y="154">higher in HOM</text>
+        <text class="t" x="340" y="154" text-anchor="end">lower in HOM</text>
+        <text class="tb" x="20" y="16">running enrichment score</text>
+        <text class="t" x="20" y="110">pathway genes in the ranked list</text>
+      </svg>
+    </div>
+  </div>
+  <div class="takehome">
+    <p class="eyebrow">Take-home</p>
+    Without Myorg, serum-starved astrocytes turn on NF-κB inflammatory signaling, while cell-death and
+    mitochondrial energy programs move in opposite directions in cortex and cerebellum: one mutation,
+    region-specific astrocyte responses.
+  </div>
+</section>
+
+<section id="code" class="wrap">
+  <p class="eyebrow">Code</p>
+  <h2>Scripts in this repository</h2>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Script</th><th>What it does</th></tr></thead>
+      <tbody id="filetable"></tbody>
+    </table>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  Bulk RNA-seq of MYORG-mutant astrocytes in PFBC · code released under the MIT License ·
+  <a href="https://github.com/chuabrandon26/Bulk-RNA-Sequencing-of-MYORG-mutant-astrocytes-in-PFBC">github.com/chuabrandon26</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var REPO = "https://github.com/chuabrandon26/Bulk-RNA-Sequencing-of-MYORG-mutant-astrocytes-in-PFBC/blob/main/";
+
+  /* ---------------- experiment ---------------- */
+  var REG = { Cx: "Cortex", CB: "Cerebellum" };
+  var MED = { SCM: "with serum", SFM: "serum-free" };
+  var GEN = { WT: "WT", HOM: 'HOM (Myorg<sup class="ko">−/−</sup>)' };
+  var GEN_PLAIN = { WT: "wild-type", HOM: "Myorg knockout" };
+  var groups = [];
+  ["WT", "HOM"].forEach(function (g) {
+    ["Cx", "CB"].forEach(function (r) {
+      ["SCM", "SFM"].forEach(function (m) { groups.push({ id: m + "_" + r + "_" + g, g: g, r: r, m: m }); });
+    });
+  });
+  function grp(id) { return groups.filter(function (x) { return x.id === id; })[0]; }
+  function describe(x) { return GEN[x.g] + " · " + REG[x.r] + " · " + MED[x.m]; }
+  function describePlain(x) { return GEN_PLAIN[x.g] + ", " + REG[x.r] + ", " + MED[x.m]; }
+
+  var contrasts = [
+    ["Cortex", "WT_SFM_vs_WT_SCM_Cx", "SFM_Cx_WT", "SCM_Cx_WT"],
+    ["Cortex", "HOM_SFM_vs_WT_SFM_Cx", "SFM_Cx_HOM", "SFM_Cx_WT"],
+    ["Cortex", "HOM_SFM_vs_HOM_SCM_Cx", "SFM_Cx_HOM", "SCM_Cx_HOM"],
+    ["Cortex", "HOM_SCM_vs_WT_SFM_Cx", "SCM_Cx_HOM", "SFM_Cx_WT"],
+    ["Cortex", "HOM_SCM_vs_WT_SCM_Cx", "SCM_Cx_HOM", "SCM_Cx_WT"],
+    ["Cerebellum", "WT_SFM_vs_WT_SCM_CB", "SFM_CB_WT", "SCM_CB_WT"],
+    ["Cerebellum", "HOM_SFM_vs_WT_SFM_CB", "SFM_CB_HOM", "SFM_CB_WT"],
+    ["Cerebellum", "HOM_SFM_vs_HOM_SCM_CB", "SFM_CB_HOM", "SCM_CB_HOM"],
+    ["Cerebellum", "HOM_SCM_vs_WT_SFM_CB", "SCM_CB_HOM", "SFM_CB_WT"],
+    ["Cerebellum", "HOM_SCM_vs_WT_SCM_CB", "SCM_CB_HOM", "SCM_CB_WT"],
+    ["Cortex vs cerebellum (WT)", "WT_SFM_Cx_vs_WT_SFM_CB", "SFM_Cx_WT", "SFM_CB_WT"],
+    ["Cortex vs cerebellum (WT)", "WT_SCM_Cx_vs_WT_SCM_CB", "SCM_Cx_WT", "SCM_CB_WT"]
+  ].map(function (c) { return { set: c[0], id: c[1], a: c[2], b: c[3] }; });
+
+  var plate = document.getElementById("plate");
+  var glyph = function (cls) {
+    var s = '<svg viewBox="-12 -12 24 24" aria-hidden="true" class="' + cls + '">';
+    for (var k = 0; k < 6; k++) {
+      var a = (k * 60 + 15) * Math.PI / 180;
+      s += '<line x1="0" y1="0" x2="' + (Math.cos(a) * 10).toFixed(1) + '" y2="' + (-Math.sin(a) * 10).toFixed(1) + '" stroke-width="2.4" stroke-linecap="round"/>';
+    }
+    return s + '<circle r="4.2" stroke="none"/></svg>';
+  };
+  var wells = {};
+  ["WT", "HOM"].forEach(function (g) {
+    var lab = document.createElement("span");
+    lab.className = "rowlab";
+    lab.textContent = g;
+    plate.appendChild(lab);
+    [["Cx", "SCM"], ["Cx", "SFM"], ["CB", "SCM"], ["CB", "SFM"]].forEach(function (rm) {
+      var x = grp(rm[1] + "_" + rm[0] + "_" + g);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.id = "well-" + x.id;
+      b.className = "well " + rm[0].toLowerCase() + " " + rm[1].toLowerCase();
+      b.setAttribute("aria-label", describePlain(x));
+      b.innerHTML = glyph(g === "WT" ? "g-wt" : "g-hom");
+      b.addEventListener("click", function () { showWell(x); });
+      wells[x.id] = b;
+      plate.appendChild(b);
+    });
+  });
+
+  var cg = document.getElementById("contrastGroups");
+  var chipEls = {};
+  ["Cortex", "Cerebellum", "Cortex vs cerebellum (WT)"].forEach(function (set) {
+    var box = document.createElement("div");
+    box.innerHTML = "<h3>" + set + "</h3>";
+    var chips = document.createElement("div");
+    chips.className = "chips";
+    contrasts.filter(function (c) { return c.set === set; }).forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.id = "chip-" + c.id;
+      b.setAttribute("aria-pressed", "false");
+      b.textContent = c.id.replace(/_(Cx|CB)$/, "").replace(/_/g, " ");
+      b.addEventListener("click", function () { showContrast(c); });
+      chipEls[c.id] = b;
+      chips.appendChild(b);
+    });
+    box.appendChild(chips);
+    cg.appendChild(box);
+  });
+
+  var readout = document.getElementById("readout");
+  function clearSel() {
+    Object.keys(wells).forEach(function (k) {
+      wells[k].classList.remove("is-a", "is-b");
+      var t = wells[k].querySelector(".tag");
+      if (t) t.remove();
+    });
+    Object.keys(chipEls).forEach(function (k) { chipEls[k].setAttribute("aria-pressed", "false"); });
+    plate.classList.remove("has-sel");
+  }
+  function tag(well, txt, cls) {
+    well.classList.add(cls);
+    var t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = txt;
+    well.appendChild(t);
+  }
+  function showContrast(c) {
+    clearSel();
+    var A = grp(c.a), B = grp(c.b);
+    chipEls[c.id].setAttribute("aria-pressed", "true");
+    plate.classList.add("has-sel");
+    tag(wells[c.a], "A", "is-a");
+    tag(wells[c.b], "B", "is-b");
+    var f = [
+      ["Genotype", A.g !== B.g], ["Region", A.r !== B.r], ["Medium", A.m !== B.m]
+    ];
+    var changed = f.filter(function (x) { return x[1]; }).length;
+    readout.innerHTML =
+      '<div class="vs"><b>A</b><span>' + describe(A) + '</span><b>B</b><span>' + describe(B) + "</span></div>" +
+      '<div class="factors">' + f.map(function (x) {
+        return '<span class="factor' + (x[1] ? " diff" : "") + '">' + x[0] + (x[1] ? " changes" : " held constant") + "</span>";
+      }).join("") + "</div>" +
+      '<p class="small" style="margin:0 0 10px">' + (changed === 1
+        ? "One factor changes, so this contrast isolates its effect."
+        : changed + " factors change at once, so their effects are combined in this contrast.") +
+      " A positive log2 fold change means higher in A.</p>" +
+      '<code class="rcode">' + c.id + " = " + c.a + " - " + c.b + "</code>";
+  }
+  function showWell(x) {
+    clearSel();
+    plate.classList.add("has-sel");
+    tag(wells[x.id], "•", "is-a");
+    var uses = contrasts.filter(function (c) { return c.a === x.id || c.b === x.id; });
+    readout.innerHTML =
+      '<p style="margin:0 0 6px"><span class="lab">' + describe(x) + '</span></p>' +
+      '<p class="small" style="margin:0 0 10px">Group <code>' + x.id + "</code> appears in " + uses.length +
+      " contrast" + (uses.length === 1 ? "" : "s") + ":</p>" +
+      '<div class="chips">' + uses.map(function (c) {
+        return '<button type="button" class="chip" data-c="' + c.id + '">' + c.id + "</button>";
+      }).join("") + "</div>";
+    readout.querySelectorAll("[data-c]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        showContrast(contrasts.filter(function (c) { return c.id === b.getAttribute("data-c"); })[0]);
+      });
+    });
+  }
+  showContrast(contrasts[1]);
+
+  /* ---------------- workflow ---------------- */
+  var steps = [
+    { role: "Reads", tool: "FASTQ", where: "Input",
+      title: "27 paired-end RNA-seq libraries",
+      text: "Two sequencing runs: 18 libraries of strand-specific eukaryotic mRNA-seq (CN274-001U) and 9 libraries of low-input mRNA-seq (CN274-002T). Each library is a pair of gzipped FASTQ files.",
+      code: "Unknown_CN274-001U0001_good_1.fq.gz   # read 1\nUnknown_CN274-001U0001_good_2.fq.gz   # read 2\n...\nUnknown_CN274-002T0009_good_2.fq.gz",
+      files: [] },
+    { role: "Trim + QC", tool: "Trim Galore", where: "Bash · HPC",
+      title: "Adapter and quality trimming",
+      text: "Trim Galore (cutadapt) removes adapters and low-quality ends from both mates, discards pairs where a read falls below 26 nt, and runs FastQC on the trimmed reads.",
+      code: "trim_galore --paired --length 26 --phred33 \\\n  --fastqc --core 8 \\\n  -o trimmed/ sample_1.fq.gz sample_2.fq.gz",
+      files: ["Trim_galore_Eukaryotic_RNA_sequencing_script_after_edit.sh", "Trim_galore_low_input_RNA_sequencing_script_after_edit.sh"] },
+    { role: "Align", tool: "STAR 2.7.3a", where: "Bash · SLURM",
+      title: "Spliced alignment to the mouse genome",
+      text: "STAR aligns each read pair to a prebuilt mouse genome index and writes a coordinate-sorted BAM. Jobs were submitted with SLURM and 100 GB of memory.",
+      code: "STAR --genomeDir star_index \\\n  --readFilesIn sample_1_val_1.fq.gz sample_2_val_2.fq.gz \\\n  --readFilesCommand gunzip -c \\\n  --outSAMtype BAM SortedByCoordinate \\\n  --runThreadN 8 --limitBAMsortRAM 10000000000",
+      files: ["star_alignment_Eukaryotic_RNA_sequencing_script.sh", "star_alignment_low_input_RNA_sequencing_script.sh"] },
+    { role: "Count", tool: "summarize\u00ADOverlaps", where: "R · Bioconductor",
+      title: "Gene-level read counts",
+      text: "Exons from the GENCODE vM36 mouse annotation are grouped by gene, and reads overlapping each gene are counted in Union mode. Ensembl IDs are mapped to gene symbols with org.Mm.eg.db.",
+      code: "txdb <- txdbmaker::makeTxDbFromGFF(\"gencode.vM36.annotation.gtf\")\nebg  <- exonsBy(txdb, by = \"gene\")\nse   <- summarizeOverlaps(ebg, BamFileList(bam_files),\n          mode = \"Union\", singleEnd = TRUE,\n          ignore.strand = TRUE)",
+      files: ["Combined_data_R_script.R"] },
+    { role: "Normalize", tool: "edgeR · TMM", where: "R · Bioconductor",
+      title: "Filtering and normalization",
+      text: "Genes with too few reads to test are removed with filterByExpr, and library sizes are scaled with trimmed mean of M-values (TMM) normalization.",
+      code: "x <- DGEList(counts = countMatrix, group = targets$Factor)\nkeep <- filterByExpr(x, group = targets$Factor)\nx <- x[keep, , keep.lib.sizes = FALSE]\nx <- calcNormFactors(x)   # TMM",
+      files: ["Combined_data_R_script.R"] },
+    { role: "Model", tool: "limma-voom", where: "R · Bioconductor",
+      title: "Linear model with sample quality weights",
+      text: "One coefficient per group plus the sequencing run as a covariate. voomWithQualityWeights models the mean-variance trend and down-weights noisier samples; 12 contrasts are tested with empirical Bayes moderation and Benjamini-Hochberg correction.",
+      code: "design <- model.matrix(~ 0 + group + batch)\nv    <- voomWithQualityWeights(x, design)\nfit  <- lmFit(v)\nfit2 <- eBayes(contrasts.fit(fit, cont.matrix))\ntopTable(fit2, coef = i, adjust.method = \"BH\")",
+      files: ["Combined_data_R_script.R"] },
+    { role: "Enrich", tool: "fgsea · GO", where: "R · Bioconductor",
+      title: "Pathway and ontology enrichment",
+      text: "fgsea tests all 50 mouse Hallmark gene sets on a ranked gene list (adjusted p < 0.05). clusterProfiler runs GO over-representation separately for up- and down-regulated genes across biological process, cellular component and molecular function (Bonferroni, p < 0.05).",
+      code: "ranks <- sign(logFC) * -log10(P.Value)\nfgsea(gmtPathways(\"mh.all.v2024.1.Mm.symbols.gmt\"), ranks,\n      minSize = 10, scoreType = \"std\")\n\nenrichGO(entrez_ids, OrgDb = org.Mm.eg.db, ont = \"ALL\",\n         pAdjustMethod = \"bonferroni\", pvalueCutoff = 0.05)",
+      files: ["brandon_gsea.R", "clusterprofiler_brandon.R"] }
+  ];
+  var rail = document.getElementById("rail");
+  var detail = document.getElementById("stepdetail");
+  var stepBtns = steps.map(function (s, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "step";
+    b.id = "step-" + (i + 1);
+    b.setAttribute("role", "tab");
+    b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="r">' + s.role +
+      '</span><span class="t">' + s.tool + "</span>";
+    b.addEventListener("click", function () { showStep(i); });
+    rail.appendChild(b);
+    return b;
+  });
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function showStep(i) {
+    var s = steps[i];
+    stepBtns.forEach(function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); });
+    detail.innerHTML =
+      '<span class="where">Step ' + (i + 1) + " of 7 · " + s.where + "</span>" +
+      "<h3>" + s.title + "</h3><p>" + esc(s.text) + "</p>" +
+      "<pre><code>" + esc(s.code) + "</code></pre>" +
+      (s.files.length ? '<ul class="files">' + s.files.map(function (f) {
+        return '<li><a href="' + REPO + f + '">' + f + "</a></li>";
+      }).join("") + "</ul>" : "") +
+      '<div class="stepnav"><button type="button" id="prevStep"' + (i === 0 ? " disabled" : "") + '>Previous step</button>' +
+      '<button type="button" id="nextStep"' + (i === steps.length - 1 ? " disabled" : "") + ">Next step</button></div>";
+    document.getElementById("prevStep").addEventListener("click", function () { showStep(i - 1); stepBtns[i - 1].focus(); });
+    document.getElementById("nextStep").addEventListener("click", function () { showStep(i + 1); stepBtns[i + 1].focus(); });
+  }
+  showStep(0);
+
+  /* ---------------- findings ---------------- */
+  var tri = function (up) {
+    return '<svg viewBox="-9 -9 18 18" aria-hidden="true"><polygon points="' +
+      (up ? "0,-7 7,5 -7,5" : "0,7 7,-5 -7,-5") + '"/></svg>';
+  };
+  var pathways = [
+    { name: "Apoptosis", id: "HALLMARK_APOPTOSIS", cx: "down", cb: "up",
+      what: "Genes that drive programmed cell death, such as caspases, BCL-2 family members and death receptors.",
+      read: 'Lower in Myorg<sup class="ko">−/−</sup> cortical astrocytes but higher in cerebellar ones under serum withdrawal, so the same mutation tilts cell-death programs in opposite directions by region.' },
+    { name: "Oxidative phosphorylation", id: "HALLMARK_OXIDATIVE_PHOSPHORYLATION", cx: "down", cb: "up",
+      what: "Mitochondrial electron-transport chain and ATP-synthase genes that make most of the cell's energy.",
+      read: "Follows apoptosis: down in cortex, up in cerebellum. Energy metabolism is rewired by region in the absence of Myorg." },
+    { name: "TNFα signaling via NF-κB", id: "HALLMARK_TNFA_SIGNALING_VIA_NFKB", cx: "up", cb: "up",
+      what: "Genes switched on by TNF through NF-κB, including cytokines, chemokines and stress-response genes.",
+      read: "Activated consistently in serum-free conditions, linking MYORG dysfunction to a maladaptive inflammatory state." }
+  ];
+  var fgrid = document.getElementById("fgrid");
+  pathways.forEach(function (p, i) {
+    var row = document.createElement("div");
+    row.className = "frow";
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "pw";
+    b.id = "pw-" + i;
+    b.setAttribute("aria-expanded", "false");
+    b.setAttribute("aria-controls", "pwinfo-" + i);
+    b.innerHTML = '<span class="name">' + p.name + '</span><span class="id">' + p.id.replace(/_/g, "_<wbr>") + "</span>";
+    row.appendChild(b);
+    ["cx", "cb"].forEach(function (r) {
+      var d = document.createElement("div");
+      d.className = "dir " + p[r];
+      d.innerHTML = tri(p[r] === "up") + "<span>" + p[r] + "</span>";
+      d.setAttribute("aria-label", (r === "cx" ? "Cortex: " : "Cerebellum: ") + p[r]);
+      row.appendChild(d);
+    });
+    var info = document.createElement("div");
+    info.className = "pwinfo";
+    info.id = "pwinfo-" + i;
+    info.hidden = true;
+    info.innerHTML = '<p class="small">' + p.what + "</p><p>" + p.read + "</p>";
+    row.appendChild(info);
+    b.addEventListener("click", function () {
+      var open = b.getAttribute("aria-expanded") === "true";
+      b.setAttribute("aria-expanded", open ? "false" : "true");
+      info.hidden = open;
+    });
+    fgrid.appendChild(row);
+    if (i === 0) { b.setAttribute("aria-expanded", "true"); info.hidden = false; }
+  });
+
+  // GSEA schematic: deterministic hit positions packed toward the top of the list
+  var hits = [6, 14, 19, 27, 33, 41, 48, 60, 72, 95, 131, 170, 222, 268, 301];
+  var N = 320, x0 = 20, base = 80, es = 0, maxDev = 0, pts = [];
+  var pHit = 1 / hits.length, pMiss = 1 / (N - hits.length);
+  for (var k = 0; k <= N; k++) {
+    es += hits.indexOf(k) >= 0 ? pHit : -pMiss;
+    pts.push([x0 + k, es]);
+    maxDev = Math.max(maxDev, Math.abs(es));
+  }
+  var scale = 52 / maxDev;
+  document.getElementById("esCurve").setAttribute("d", pts.map(function (p, i) {
+    return (i ? "L" : "M") + p[0] + "," + (base - p[1] * scale).toFixed(1);
+  }).join(" "));
+  document.getElementById("hits").innerHTML = hits.map(function (h) {
+    return '<line class="hit" x1="' + (x0 + h) + '" y1="114" x2="' + (x0 + h) + '" y2="124"/>';
+  }).join("");
+
+  /* ---------------- code table ---------------- */
+  var files = [
+    ["Trim + QC", "Trim_galore_Eukaryotic_RNA_sequencing_script_after_edit.sh", "Trim Galore + FastQC, run 1 (18 libraries)"],
+    ["Trim + QC", "Trim_galore_low_input_RNA_sequencing_script_after_edit.sh", "Trim Galore + FastQC, run 2 (9 low-input libraries)"],
+    ["Align", "star_alignment_Eukaryotic_RNA_sequencing_script.sh", "STAR alignment, run 1 (SLURM job)"],
+    ["Align", "star_alignment_low_input_RNA_sequencing_script.sh", "STAR alignment, run 2 (SLURM job)"],
+    ["Count → model", "Combined_data_R_script.R", "Counting, edgeR/TMM, limma-voom, MDS plots, 12 contrasts"],
+    ["Enrich", "brandon_gsea.R", "fgsea on Hallmark sets, combined NES dot plot"],
+    ["Enrich", "clusterprofiler_brandon.R", "GO enrichment (BP/CC/MF) for up- and down-regulated genes"]
+  ];
+  document.getElementById("filetable").innerHTML = files.map(function (f) {
+    return "<tr><td>" + f[0] + '</td><td><a href="' + REPO + f[1] + '"><code>' + f[1] + "</code></a></td><td>" + f[2] + "</td></tr>";
+  }).join("");
+
+  /* ---------------- section nav highlight ---------------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll(".secnav a"));
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    ["question", "experiment", "workflow", "findings", "code"].forEach(function (id) { io.observe(document.getElementById(id)); });
+  }
+})();
+</script>
+</body>
+</html>
